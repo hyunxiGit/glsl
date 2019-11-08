@@ -18,12 +18,19 @@ void draw_coodinate (vec2 uv)
 	c = lerp(c, vec3(v), m);
 }
 
-float plotLine(vec2 uv , float v )
+void draw_Line(vec2 uv , float v )
 {
 	float pixwlWidth = 1.5/u_resolution.y;
 	float v1 = smoothstep(v-pixwlWidth,v+pixwlWidth,uv.y);
 	float v2 = smoothstep(v-pixwlWidth,v+pixwlWidth,uv.y - pixwlWidth);
-	return v1-v2;
+	v = v1-v2;
+	float m = smoothstep(0.1,0.3,v);
+	c = lerp(c, vec3(1.,0.,0.), m);
+}
+
+void draw_gradient(vec2 uv , float v)
+{
+	c = vec3(v,v,v);
 }
 
 float g_linear (float x)
@@ -45,10 +52,11 @@ float powAbs(float x)
 void main()
 {
 	vec2 uv = gl_FragCoord.xy/u_resolution - vec2(0.5);
-	float v = powAbs(uv.x);
-	float l = plotLine(uv , v) ;
-	c = lerp ( vec3(v),vec3(0.,1.,0.),l);
 
+	float v = powAbs(uv.x);
+	//put curv fun in v, draw line or draw gradient
+	draw_gradient(uv,v);
+	draw_Line(uv,v);
 	draw_coodinate(uv);
 	vec4 col = vec4(c,1.);
 	gl_FragColor = col;
