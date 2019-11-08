@@ -6,6 +6,18 @@ uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 
+vec3 c;
+
+void draw_coodinate (vec2 uv)
+{
+	float pixwlWidth = 1.5/u_resolution.y;
+	float x = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.x));
+	float y = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.y));
+	float v = max (2*x,2*y);
+	float m = smoothstep(0.1,0.3,v);
+	c = lerp(c, vec3(v), m);
+}
+
 float plotLine(vec2 uv , float v )
 {
 	float pixwlWidth = 1.5/u_resolution.y;
@@ -14,12 +26,30 @@ float plotLine(vec2 uv , float v )
 	return v1-v2;
 }
 
+float g_linear (float x)
+{
+		return x;
+}
+
+float impulse( float k, float x ){
+	//k is how compact the gradient is
+    float h = k*x;
+    return h*exp(1.0-h);
+}
+
+float powAbs(float x)
+{
+	return pow(abs(x),0.5);
+}
+
 void main()
 {
-	vec2 uv = gl_FragCoord.xy/u_resolution;
-	float v = sin(uv.x);
+	vec2 uv = gl_FragCoord.xy/u_resolution - vec2(0.5);
+	float v = powAbs(uv.x);
 	float l = plotLine(uv , v) ;
-	vec3 c = lerp ( vec3(v),vec3(0.,1.,0.),l);
+	c = lerp ( vec3(v),vec3(0.,1.,0.),l);
+
+	draw_coodinate(uv);
 	vec4 col = vec4(c,1.);
 	gl_FragColor = col;
 }
