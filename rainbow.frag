@@ -10,6 +10,15 @@ float pixwlWidth = 1.5/u_resolution.y;
 
 vec3 c;
 
+#define c_red vec3(1.,0.,0.)
+#define c_yellow vec3(1.,1.,0.)
+#define c_green vec3(0.,1.,0.)
+#define c_cyan vec3(0.,1.,1.)
+#define c_blue vec3(0.,0.,1.)
+#define purple vec3(1.,0.,1.)
+
+
+
 void draw_coodinate ()
 {
 	float x = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.x));
@@ -34,30 +43,35 @@ void draw_gradient(vec2 uv , float v)
 	c = vec3(v,v,v);
 }
 
-float g_linear (float x)
+float circleEaseout( float r)
 {
-		return x;
+	return sqrt(r-uv.x*uv.x);
 }
 
-float impulse( float k, float x ){
-	//k is how compact the gradient is
-    float h = k*x;
-    return h*exp(1.0-h);
-}
-
-float powAbs(float x)
+void draw_rainbow(float v)
 {
-	return 1.-pow(abs(x),0.5);
+	v = length(uv);
+	if(v <1.)
+	{
+		float step = 1/6.;
+		float t = smoothstep(step,step*2.,v);
+		c = c_red;
+		c = mix (c_red, c_yellow,t);
+		t = smoothstep(step*3,step*4.,v);
+		c = mix (c, c_green,t);
+		t = smoothstep(step*4,step*5.,v);
+		c = mix (c, c_cyan,t);
+		t = smoothstep(step*5,step*6.,v);
+		c = mix (c, c_blue,t);
+	}
 }
-
 
 void main()
 {
-	float v = powAbs(uv.x);
 
-	//put curv fun in v, draw line or draw gradient
-	draw_gradient(uv,v);
-	draw_Line(uv,v);
+	float v = circleEaseout (1.);
+	draw_rainbow(v);
+	draw_Line(uv , v );
 	draw_coodinate();
 	vec4 col = vec4(c,1.);
 	gl_FragColor = col;
