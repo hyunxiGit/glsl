@@ -1,4 +1,3 @@
-
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -15,8 +14,9 @@ void draw_coodinate (vec2 uv)
 	float x = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.x));
 	float y = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.y));
 	float v = max (2.*x,2.*y);
-	float m = smoothstep(0.1,0.3,v);
-	c = mix(c, vec3(v), m);
+	//second value to adjust how strong a line is
+	float m = smoothstep(0.05,0.1,v);
+	c = mix(c, vec3(0.,1.,0.), m);
 }
 
 void draw_Line(vec2 uv , float v )
@@ -47,14 +47,15 @@ float impulse( float k, float x ){
 
 float powAbs(float x)
 {
-	return pow(abs(x),0.5);
+	return 1.-pow(abs(x),0.5);
 }
 
 void main()
 {
-	vec2 uv = gl_FragCoord.xy/u_resolution - vec2(0.5);
+	vec2 uv = 2.*gl_FragCoord.xy/u_resolution - vec2(1.);
 
 	float v = powAbs(uv.x);
+	
 	//put curv fun in v, draw line or draw gradient
 	draw_gradient(uv,v);
 	draw_Line(uv,v);
