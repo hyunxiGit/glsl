@@ -10,6 +10,8 @@ float pixwlWidth = 1.5/u_resolution.y;
 
 vec3 c;
 
+const float PI = 3.1415926535897932384626433832795;
+
 #define c_red vec3(1.,0.,0.)
 #define c_yellow vec3(1.,1.,0.)
 #define c_green vec3(0.,1.,0.)
@@ -50,19 +52,14 @@ float circleEaseout( float r)
 
 void draw_rainbow(float v)
 {
+	//this is not quite correct , because there will be a gap between r and g , yellow is missing
 	v = length(uv);
 	if(v <1.)
 	{
-		float step = 1/6.;
-		float t = smoothstep(step,step*2.,v);
-		c = c_red;
-		c = mix (c_red, c_yellow,t);
-		t = smoothstep(step*3,step*4.,v);
-		c = mix (c, c_green,t);
-		t = smoothstep(step*4,step*5.,v);
-		c = mix (c, c_cyan,t);
-		t = smoothstep(step*5,step*6.,v);
-		c = mix (c, c_blue,t);
+		float r = cos((v-0.25)*PI*2.);
+		float g = cos((v-0.25-0.33333)*PI*2.);
+		float b = cos((v-0.25-0.66666)*PI*2.);
+		c= vec3(r,g,b);
 	}
 }
 
