@@ -1,3 +1,4 @@
+
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -13,9 +14,9 @@ void draw_coodinate (vec2 uv)
 	float pixwlWidth = 1.5/u_resolution.y;
 	float x = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.x));
 	float y = smoothstep(pixwlWidth, -pixwlWidth , abs(uv.y));
-	float v = max (2*x,2*y);
+	float v = max (2.*x,2.*y);
 	float m = smoothstep(0.1,0.3,v);
-	c = lerp(c, vec3(v), m);
+	c = mix(c, vec3(v), m);
 }
 
 void draw_Line(vec2 uv , float v )
@@ -25,7 +26,7 @@ void draw_Line(vec2 uv , float v )
 	float v2 = smoothstep(v-pixwlWidth,v+pixwlWidth,uv.y - pixwlWidth);
 	v = v1-v2;
 	float m = smoothstep(0.1,0.3,v);
-	c = lerp(c, vec3(1.,0.,0.), m);
+	c = mix(c, vec3(1.,0.,0.), m);
 }
 
 void draw_gradient(vec2 uv , float v)
